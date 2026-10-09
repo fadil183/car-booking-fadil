@@ -3,6 +3,7 @@ package user
 import (
 	"car-booking-fadil/app/handler/encryption"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -30,11 +31,16 @@ func (r *GormRepository) AddNewUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 
-	if user.Email == "" || user.Password == "" {
+	user.Email = strings.TrimSpace(user.Email)
+	if user.Email == "" || strings.TrimSpace(user.Password) == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "email and password are required")
 	}
 
-	user.Password = encryption.HashPassword(user.Password)
+	hashed, err := encryption.HashPassword(user.Password)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to process password")
+	}
+	user.Password = hashed
 
 	if err := r.Create(&user).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
