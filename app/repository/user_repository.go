@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type newUser struct {
+type User struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -25,8 +25,8 @@ func NewGormRepository(db *gorm.DB) *GormRepository {
 }
 
 // AddNewUser adds a user from an API request to the database.
-func (r *GormRepository) AddNewUser(c echo.Context) error {
-	var user newUser
+func (r *GormRepository) SaveUser(c echo.Context) error {
+	var user User
 	if err := c.Bind(&user); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
@@ -49,4 +49,23 @@ func (r *GormRepository) AddNewUser(c echo.Context) error {
 	return c.JSON(http.StatusCreated, map[string]string{
 		"message": "new user has been created",
 	})
+}
+
+func (r *GormRepository) GetUserByEmail(c echo.Context) error {
+	return c.JSON(http.StatusCreated, map[string]string{
+		"current_user": "user",
+	})
+}
+
+func (r *GormRepository) TopUp(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{})
+}
+func (r *GormRepository) GetAllRentCarAvailable(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{})
+}
+func (r *GormRepository) BookCar(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{})
+}
+func (r *GormRepository) History(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{})
 }
