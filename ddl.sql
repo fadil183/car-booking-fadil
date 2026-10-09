@@ -27,3 +27,48 @@ VALUES
 
 -- drop Table cars;
 -- TRUNCATE Table cars
+
+CREATE TABLE books (
+    bookID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    carID INT NOT NULL,
+    userID INT NOT NULL,
+    booking_period DATERANGE NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_books_users FOREIGN KEY (userID)
+        REFERENCES users(userID)
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_books_cars FOREIGN KEY (carID)
+        REFERENCES cars(carID)
+        ON DELETE RESTRICT,
+    CONSTRAINT check_valid_booking_period CHECK (NOT isempty(booking_period))
+);
+
+-- drop Table books;
+
+-- history: log of user activities (top up and booking)
+CREATE TABLE history (
+    historyID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    userID INT NOT NULL,
+    bookID INT,
+    carID INT,
+    type VARCHAR(20) NOT NULL CHECK (type IN ('TOPUP', 'BOOKING')),
+    amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
+    balance_after NUMERIC(12, 2) NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_history_users FOREIGN KEY (userID)
+        REFERENCES users(userID)
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_history_books FOREIGN KEY (bookID)
+        REFERENCES books(bookID)
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_history_cars FOREIGN KEY (carID)
+        REFERENCES cars(carID)
+        ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_history_user_created ON history (userID, created_at DESC);
+
+-- drop Table history;
+

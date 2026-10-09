@@ -12,7 +12,8 @@ func NewRouter(db *gorm.DB) *echo.Echo {
 	users := userRepository.NewGormRepository(db)
 
 	e.POST("/register", users.SaveUser)
-	e.POST("/login", users.GetUserByEmail)
+	e.POST("/login", users.Login)
+
 	e.POST("/topup", users.TopUp)
 	e.POST("/rent", users.GetAllRentCarAvailable)
 	e.POST("/books", users.BookCar)
