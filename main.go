@@ -1,13 +1,13 @@
 package main
 
 import (
+	"car-booking-fadil/app/handler"
 	"car-booking-fadil/config"
-	"log"
 )
 
 func main() {
 	db := config.NewDB()
 
-	log.Println(db)
-
+	e := routes.NewRouter(db)
+	e.Logger.Fatal(e.Start(":8080"))
 }
