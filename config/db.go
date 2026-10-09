@@ -23,6 +23,7 @@ func NewDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	log.Println("database connected succesfully")
 	return db.Debug()
+
 }
